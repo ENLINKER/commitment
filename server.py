@@ -1,16 +1,20 @@
+#!/usr/bin/env python3
+
 import argparse
 from datetime import datetime
 import socket
 
-from request.post import Post
+from post.post import Post
 from request.request import Request, RequestType
-from request.open_commitment import OpenCommitment
+from post.open_commitment_msg import OpenCommitmentMsg
 import json
+import os
 
 
 class Server:
     def __init__(self, host, port, log_filename):
         self.addr = (host, port)
+        os.makedirs(os.path.dirname(log_filename), exist_ok=True)
         self.log_fp = open(log_filename, 'w')
         self.posts = []
 
@@ -25,30 +29,38 @@ class Server:
 
     def start(self):
         self.socket = socket.socket()
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind(self.addr)
         self.socket.listen()
         print(f'Accepting connection on {self.addr}')
 
         while True:
             client, addr = self.socket.accept()
-            print(f'Connected by {addr}')
+            # print(f'Connected by {addr}')
             msg = client.recv(1024).decode()
-            print(f'msg: {msg}')
-            request = Request.from_str(msg)
-            if request.request_type == RequestType.NEW_POST:
-                post = Post.from_json(request.content)
+            # print(f'msg: {msg}')
+            request = Request.from_json(msg)
+            if request.type == RequestType.NEW_POST:
+                post = Post.from_dict(request.content)
+                post.id = len(self.posts)
                 self.posts.append(post)
-                client.send(json.dumps({"id", len(self.posts) - 1}))
-            elif request.request_type == RequestType.OPEN_COMMITMENT:
-                open_commitment = OpenCommitment.from_json(request.content)
-                self.posts[open_commitment.id].open_commitment(open_commitment.dec_msg)
+                client.send(json.dumps({"id": len(self.posts) - 1}).encode())
+            elif request.type == RequestType.OPEN_COMMITMENT:
+                open_commitment_msg = OpenCommitmentMsg.from_dict(request.content)
+                # print(open_commitment)
+                # print()
+                # print(self.posts[open_commitment_msg.post_id])
+                self.posts[open_commitment_msg.post_id].open(open_commitment_msg)
+                # print(self.posts[open_commitment_msg.post_id])
+                # print()
+                # client.send(json.dumps({"status": "success"}).encode())
             client.close()
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('host', type=str, default="localhost")
-parser.add_argument('port', type=int, defalut=8080)
-parser.add_argument('log', type=str, default="log/server.log")
+parser.add_argument('--host', type=str, default="localhost")
+parser.add_argument('--port', type=int, default=8080)
+parser.add_argument('--log', type=str, default="log/server.log")
 
 args = parser.parse_args()
 

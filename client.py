@@ -80,7 +80,7 @@ for iteration in range(100, 1001, 100):
     t1 = time.time()
     client.test(iteration=iteration, anonymous=True)
     t2 = time.time()
-    print(f"it = {iteration}, diff = {t2 - t1}")
+    print(f"n = {iteration}, time = {t2 - t1}")
 
 
 print()
@@ -92,4 +92,4 @@ for iterations in range(100, 1001, 100):
     for iteration in range(iterations):
         client.test()
     t2 = time.time()
-    print(f"it = {iterations}, diff = {t2 - t1}")
+    print(f"n = {iterations}, time = {t2 - t1}")

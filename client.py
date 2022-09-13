@@ -8,6 +8,7 @@ from fastecdsa.keys import gen_private_key, get_public_key, gen_keypair
 from fastecdsa.point import Point
 from fastecdsa.curve import P256
 import socket
+import benchmark
 from post.open_commitment_msg import OpenCommitmentMsg
 from post.post import Post
 from request.request import Request, RequestType
@@ -27,18 +28,20 @@ class Client:
     def __post_init__(self):
         self.pk = get_public_key(self.sk, P256)
 
-    def __send_request(self, request):
+    def send_request(self, request):
+        t1 = time.time()
         s = socket.socket()
         s.connect((self.host, self.port))
         s.send(request.to_json().encode())
         msg = s.recv(1024).decode()
         s.close()
+        benchmark.NETWORK += time.time() - t1
         return msg
 
     def create_post(self, content, anonymous=False):
         post = Post.create(content, user_pk=self.pk, anonymous=anonymous)
         request = Request(type=RequestType.NEW_POST, content=post.to_dict())
-        result = self.__send_request(request)
+        result = self.send_request(request)
         post.id = json.loads(result)["id"]
         if anonymous:
             self.anonymous_posts.append(post)
@@ -48,7 +51,7 @@ class Client:
     def open_commitment(self, post: Post):
         c = OpenCommitmentMsg.gen(post=post)
         request = Request(type=RequestType.OPEN_COMMITMENT, content=c.to_dict())
-        self.__send_request(request)
+        self.send_request(request)
 
     def test(self, iteration=10, anonymous=False):
         if anonymous:
@@ -80,16 +83,24 @@ for iteration in range(100, 1001, 100):
     t1 = time.time()
     client.test(iteration=iteration, anonymous=True)
     t2 = time.time()
-    print(f"n = {iteration}, time = {t2 - t1}")
+    print(f"n = {iteration}, time = {t2 - t1:.2f}, {benchmark.ENCRYPT:.2f} {benchmark.GEN_DECRYPT_MSG:.2f} {benchmark.GENERATE_PROOF:.2f}, net {benchmark.NETWORK:.2f}, other {t2 - t1 - benchmark.ENCRYPT - benchmark.GEN_DECRYPT_MSG - benchmark.GENERATE_PROOF - benchmark.NETWORK:.2f}")
+    request = Request(type=RequestType.STATUS, content="")
+    client.send_request(request)
+    benchmark.ENCRYPT = 0
+    benchmark.GENERATE_PROOF = 0
+    benchmark.NETWORK = 0
+    benchmark.GEN_DECRYPT_MSG = 0
 
 
-print()
-print("normal post")
-for iterations in range(100, 1001, 100):
-    client = Client(host=args.host, port=args.port)
-    # print(client)
-    t1 = time.time()
-    for iteration in range(iterations):
-        client.test()
-    t2 = time.time()
-    print(f"n = {iterations}, time = {t2 - t1}")
+# print()
+# print("normal post")
+# for iteration in range(100, 1001, 100):
+#     client = Client(host=args.host, port=args.port)
+#     # print(client)
+#     t1 = time.time()
+#     client.test(iteration=iteration)
+#     t2 = time.time()
+#     print(f"n = {iteration}, time = {t2 - t1:.2f}, {benchmark.GENERATE_PROOF:.2f}")
+#     request = Request(type=RequestType.STATUS, content="")
+#     client.send_request(request)
+#     benchmark.GENERATE_PROOF = 0

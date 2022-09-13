@@ -8,7 +8,7 @@ class RequestType(str, Enum):
     # TODO check this part
     NEW_POST = auto()
     OPEN_COMMITMENT = auto()
-    # GET_POSTS = auto()
+    STATUS = auto()
 
 
 @dataclass_json

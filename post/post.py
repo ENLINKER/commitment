@@ -1,8 +1,9 @@
 from dataclasses import dataclass, field
 import json
+import time
 from typing import Optional
 from fastecdsa.point import Point
-
+import benchmark
 from crypto.elgamal import ElGamal, point_decoder, point_encoder
 from dataclasses_json import dataclass_json, config
 
@@ -23,11 +24,18 @@ class Post:
     @ classmethod
     def create(cls, content, user_pk, anonymous=False):
         if anonymous:
+            t1 = time.time()
             sk, pk = gen_keypair(P256)
             commitment = ElGamal.encrypt(pk, user_pk)
+            benchmark.ENCRYPT += time.time() - t1
             return cls(content, user_pk=pk, commitment=commitment, anonymous_sk=sk)
         return cls(content, user_pk=user_pk)
 
     def open(self, open_commitment_msg: OpenCommitmentMsg):
+        t1 = time.time()
         assert (open_commitment_msg.proof.verify(P256.G, self.commitment.c2, self.user_pk, open_commitment_msg.dec_msg))
+        benchmark.VERIFY_PROOF += time.time() - t1
+
+        t1 = time.time()
         self.user_pk = self.commitment.decrypt(open_commitment_msg.dec_msg)
+        benchmark.DECRYPT += time.time() - t1

@@ -3,12 +3,14 @@
 import argparse
 from datetime import datetime
 import socket
+import time
 
 from post.post import Post
 from request.request import Request, RequestType
 from post.open_commitment_msg import OpenCommitmentMsg
 import json
 import os
+import benchmark
 
 
 class Server:
@@ -35,25 +37,38 @@ class Server:
         print(f'Accepting connection on {self.addr}')
 
         while True:
+            # t1 = time.time()
             client, addr = self.socket.accept()
+            # benchmark.NETWORK += time.time() - t1
             # print(f'Connected by {addr}')
             msg = client.recv(1024).decode()
             # print(f'msg: {msg}')
             request = Request.from_json(msg)
             if request.type == RequestType.NEW_POST:
+                t1 = time.time()
                 post = Post.from_dict(request.content)
                 post.id = len(self.posts)
                 self.posts.append(post)
                 client.send(json.dumps({"id": len(self.posts) - 1}).encode())
+                benchmark.NEW_POST += time.time() - t1
             elif request.type == RequestType.OPEN_COMMITMENT:
+                t1 = time.time()
                 open_commitment_msg = OpenCommitmentMsg.from_dict(request.content)
-                # print(open_commitment)
-                # print()
-                # print(self.posts[open_commitment_msg.post_id])
                 self.posts[open_commitment_msg.post_id].open(open_commitment_msg)
-                # print(self.posts[open_commitment_msg.post_id])
-                # print()
-                # client.send(json.dumps({"status": "success"}).encode())
+                benchmark.OPEN_COMMITMENT += time.time() - t1
+            elif request.type == RequestType.STATUS:
+                print(f"NEW_POST {benchmark.NEW_POST:.2f}, OPEN_COMMITMENT {benchmark.OPEN_COMMITMENT:.2f}")
+                print(
+                    f"DECRYPT {benchmark.DECRYPT:.2f}, VERIFY_PROOF {benchmark.VERIFY_PROOF:.2f}")
+                # print(f"NETWORK {benchmark.NETWORK:.2f}")
+                print(
+                    f"other {benchmark.NEW_POST + benchmark.OPEN_COMMITMENT - benchmark.DECRYPT - benchmark.VERIFY_PROOF:.2f}")
+                print()
+                benchmark.DECRYPT = 0
+                benchmark.VERIFY_PROOF = 0
+                benchmark.NEW_POST = 0
+                benchmark.OPEN_COMMITMENT = 0
+                # benchmark.NETWORK = 0
             client.close()
 
 

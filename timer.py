@@ -4,6 +4,8 @@ import sys
 import time
 from dataclasses_json import dataclass_json
 
+from utils import get_dict_size, get_list_size
+
 
 @dataclass_json
 @dataclass
@@ -20,7 +22,12 @@ class Timer:
         self.duration += time.time_ns() - self.start_time
 
     def add_bandwidth(self, obj):
-        self.bandwidth += sys.getsizeof(obj)
+        if type(obj) is dict:
+            self.bandwidth += get_dict_size(obj)
+        elif type(obj) is list:
+            self.bandwidth += get_list_size(obj)
+        else:
+            self.bandwidth += sys.getsizeof(obj)
 
     def print(self, round: int = 1):
         t = (self.duration / round) / pow(10, 6)

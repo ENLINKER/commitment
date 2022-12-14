@@ -3,6 +3,7 @@
 import sys
 from uuid import UUID
 from post import Post
+from utils import get_dict_size, get_list_size
 
 
 class Manager:
@@ -26,5 +27,8 @@ class Manager:
     def disclose_phase_receive(self, uuid: UUID, username: str, ck: bytes):
         return self.posts[uuid].open(username, ck)
 
-    def count_storage(self):
-        return sys.getsizeof(self.rpks) + sys.getsizeof(self.posts)
+    def rpks_storage(self):
+        return get_list_size(self.rpks)
+
+    def posts_storage(self):
+        return get_dict_size(self.posts)

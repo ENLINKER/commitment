@@ -4,7 +4,7 @@ from timer import Timer
 from user import User
 from manager import Manager
 
-NUM_USER = 1000
+NUM_USER = 100
 POST_PER_USER = 100
 
 manager = Manager()
@@ -27,11 +27,11 @@ for user in users:
     manager.registration_phase_receive(rpk)
     manager_timer1.end()
 
-manager_timer1.start()
-rpks = manager.registration_phase_send_rpks()
-manager_timer1.end()
-manager_timer1.add_bandwidth(rpk)
 for user in users:
+    manager_timer1.start()
+    rpks = manager.registration_phase_send_rpks()
+    manager_timer1.end()
+    manager_timer1.add_bandwidth(rpk)
     user_timer1.add_bandwidth(rpks)
     user_timer1.start()
     user.registration_phase_receive_rpks(rpks)
@@ -90,3 +90,4 @@ user_timer3.print(NUM_USER * POST_PER_USER)
 
 print()
 print(f"Manager storage: {manager.count_storage() / (NUM_USER * POST_PER_USER)} Bytes per user per post")
+print(f"Manager storage: {manager.count_storage()} Bytes total")

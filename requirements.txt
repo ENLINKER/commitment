@@ -1,4 +1,16 @@
 autopep8==1.7.0
-fastecdsa==2.2.3
+cffi==1.15.1
+cryptography==38.0.4
+dataclasses-json==0.5.7
+marshmallow==3.17.1
+marshmallow-enum==1.5.1
+mypy-extensions==0.4.3
+packaging==21.3
 pycodestyle==2.9.1
+pycparser==2.21
+pycryptodome==3.16.0
+pyparsing==3.0.9
+pyring @ git+https://github.com/bartvm/pyring.git@55bb07646f6459f8041f220152877c21f243c7ec
 toml==0.10.2
+typing-inspect==0.8.0
+typing_extensions==4.3.0

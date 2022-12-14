@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 from uuid import UUID
 from post import Post
 
@@ -24,3 +25,6 @@ class Manager:
 
     def disclose_phase_receive(self, uuid: UUID, username: str, ck: bytes):
         return self.posts[uuid].open(username, ck)
+
+    def count_storage(self):
+        return sys.getsizeof(self.rpks) + sys.getsizeof(self.posts)

@@ -4,7 +4,7 @@ from timer import Timer
 from user import User
 from manager import Manager
 
-NUM_USER = 100
+NUM_USER = 1000
 POST_PER_USER = 100
 
 manager = Manager()
@@ -32,6 +32,7 @@ for user in users:
     rpks = manager.registration_phase_send_rpks()
     manager_timer1.end()
     manager_timer1.add_bandwidth(rpks)
+
     user_timer1.add_bandwidth(rpks)
     user_timer1.start()
     user.registration_phase_receive_rpks(rpks)
@@ -53,6 +54,7 @@ for user in users:
         post = user.unlinkable_post_phase_send()
         user_timer2.end()
         user_timer2.add_bandwidth(post)
+
         manager_timer2.add_bandwidth(post)
         manager_timer2.start()
         success = manager.unlinkable_post_phase_receive(post)
@@ -77,6 +79,7 @@ for user in users:
         user_timer3.add_bandwidth(post.uuid)
         user_timer3.add_bandwidth(username)
         user_timer3.add_bandwidth(ck)
+
         manager_timer3.add_bandwidth(post.uuid)
         manager_timer3.add_bandwidth(username)
         manager_timer3.add_bandwidth(ck)

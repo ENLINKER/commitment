@@ -7,6 +7,7 @@ from dataclasses_json import dataclass_json
 from pyring.one_time import RingSignature, ring_sign, Scalar, ring_verify
 from Crypto.Cipher import AES
 from uuid import UUID, uuid4
+from pyring.serialize import export_pem
 
 
 @dataclass_json
@@ -17,6 +18,9 @@ class Post:
     sigma: Optional[RingSignature] = None
     username: Optional[str] = None
     uuid: UUID = field(default_factory=uuid4)
+
+    def __sizeof__(self) -> int:
+        return sys.getsizeof(self.message) + sys.getsizeof(self.com) + sys.getsizeof(export_pem(self.sigma)) + sys.getsizeof(self.username) + sys.getsizeof(self.uuid)
 
     def __randomname(self, username: str):
         return sha256((self.message + username).encode()).hexdigest()

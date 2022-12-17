@@ -4,7 +4,7 @@ import sys
 import time
 from dataclasses_json import dataclass_json
 
-from utils import get_dict_size, get_list_size
+from utils import get_dict_size, get_list_size, get_object_size
 
 
 @dataclass_json
@@ -27,7 +27,7 @@ class Timer:
         elif type(obj) is list:
             self.bandwidth += get_list_size(obj)
         else:
-            self.bandwidth += sys.getsizeof(obj)
+            self.bandwidth += get_object_size(obj)
 
     def print(self, round: int = 1):
         t = (self.duration / round) / pow(10, 6)

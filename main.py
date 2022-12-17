@@ -5,6 +5,8 @@ from user import User
 from manager import Manager
 import argparse
 
+from utils import get_list_size, get_object_size
+
 parser = argparse.ArgumentParser()
 parser.add_argument("-u", "--user", type=int, required=True)
 parser.add_argument("-p", "--post", type=int, required=True)

@@ -44,7 +44,7 @@ for user in users:
     user.registration_phase_receive_rpks(rpks)
     user_timer1.end()
 
-manager_timer1.print(NUM_USER)
+manager_timer1.print()
 user_timer1.print(NUM_USER)
 
 
@@ -67,8 +67,8 @@ for user in users:
         manager_timer2.end()
         assert (success)
 
-manager_timer2.print(NUM_USER * POST_PER_USER)
-user_timer2.print(NUM_USER * POST_PER_USER)
+manager_timer2.print()
+user_timer2.print(NUM_USER)
 
 
 print()
@@ -94,13 +94,13 @@ for user in users:
         manager_timer3.end()
         assert (success)
 
-manager_timer3.print(NUM_USER * POST_PER_USER)
-user_timer3.print(NUM_USER * POST_PER_USER)
+manager_timer3.print()
+user_timer3.print(NUM_USER)
 
 print()
 print(f"Manager rpk storage: {manager.rpks_storage()} Bytes total")
 print(f"Manager rpk storage: {manager.rpks_storage() / NUM_USER} Bytes per user")
 
 print()
-print(f"Manager posts storage: {manager.posts_storage()} Bytes")
+print(f"Manager posts storage: {manager.posts_storage()} Bytes total")
 print(f"Manager posts storage: {manager.posts_storage() / (NUM_USER * POST_PER_USER)} Bytes per post")

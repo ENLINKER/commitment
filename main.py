@@ -3,9 +3,15 @@
 from timer import Timer
 from user import User
 from manager import Manager
+import argparse
 
-NUM_USER = 1000
-POST_PER_USER = 100
+parser = argparse.ArgumentParser()
+parser.add_argument("-u", "--user", type=int, required=True)
+parser.add_argument("-p", "--post", type=int, required=True)
+args = parser.parse_args()
+
+NUM_USER = args.user
+POST_PER_USER = args.post
 
 manager = Manager()
 users = [User() for i in range(NUM_USER)]

@@ -100,9 +100,12 @@ manager_timer3.print()
 user_timer3.print(NUM_USER)
 
 print()
-print(f"Manager rpk storage: {manager.rpks_storage()} Bytes total")
+print(f"Manager rpk storage: {manager.rpks_storage()} Bytes")
 print(f"Manager rpk storage: {manager.rpks_storage() / NUM_USER} Bytes per user")
 
 print()
-print(f"Manager posts storage: {manager.posts_storage()} Bytes total")
+print(f"Manager posts storage: {manager.posts_storage()} Bytes")
 print(f"Manager posts storage: {manager.posts_storage() / (NUM_USER * POST_PER_USER)} Bytes per post")
+
+print()
+print(f"Manager total storage: {manager.rpks_storage() + manager.posts_storage()} Bytes")

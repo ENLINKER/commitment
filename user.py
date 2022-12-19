@@ -10,15 +10,15 @@ from Crypto.Random import get_random_bytes
 
 class User:
     def __init__(self):
-        self.rsk = PrivateKey.generate()
-        self.rpk = self.rsk.public_key().point
-        self.rsk = self.rsk.scalar
         self.cks = {}
 
         self.username = ''.join(random.choices(string.ascii_lowercase, k=8))
         self.posts = []
 
     def registration_phase_send(self):
+        self.rsk = PrivateKey.generate()
+        self.rpk = self.rsk.public_key().point
+        self.rsk = self.rsk.scalar
         return self.rpk
 
     def registration_phase_receive_rpks(self, rpks: list):

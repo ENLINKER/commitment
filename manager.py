@@ -3,7 +3,7 @@
 import sys
 from uuid import UUID
 from post import Post
-from utils import get_dict_size, get_list_size
+from utils import get_object_size
 
 
 class Manager:
@@ -28,7 +28,7 @@ class Manager:
         return self.posts[uuid].open(username, ck)
 
     def rpks_storage(self):
-        return get_list_size(self.rpks)
+        return get_object_size(self.rpks)
 
     def posts_storage(self):
-        return get_dict_size(self.posts)
+        return get_object_size(self.posts)

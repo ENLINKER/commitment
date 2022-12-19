@@ -22,14 +22,9 @@ class Timer:
         self.duration += time.time_ns() - self.start_time
 
     def add_bandwidth(self, obj):
-        if type(obj) is dict:
-            self.bandwidth += get_dict_size(obj)
-        elif type(obj) is list:
-            self.bandwidth += get_list_size(obj)
-        else:
-            self.bandwidth += get_object_size(obj)
+        self.bandwidth += get_object_size(obj)
 
     def print(self, round: int = 1):
         t = (self.duration / round) / pow(10, 6)
-        b = self.bandwidth / round
-        print(f"[{self.title}] {t} ms, {b} Bytes")
+        b = self.bandwidth // round
+        print(f"[{self.title}] {t:.3f} ms, {b} Bytes")

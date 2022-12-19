@@ -1,0 +1,22 @@
+1. registration phase
+[manager phase 1.1] 0.058 ms, 6796 Bytes
+[user phase 1.1] 0.046 ms, 67 Bytes
+
+[manager phase 1.2] 0.033 ms, 400000 Bytes
+[user phase 1.2] 0.000 ms, 4000 Bytes
+
+2. unlinkable post phase
+[manager phase 2] 640544.978 ms, 142690000 Bytes
+[user phase 2] 6548.081 ms, 1426900 Bytes
+
+3. disclose post phase
+[manager phase 3] 238.366 ms, 1620000 Bytes
+[user phase 3] 0.134 ms, 16200 Bytes
+
+Manager rpk storage: 4000 Bytes
+Manager rpk storage: 40 Bytes per user
+
+Manager posts storage: 143660000 Bytes
+Manager posts storage: 14366 Bytes per post
+
+Manager total storage: 143664000 Bytes

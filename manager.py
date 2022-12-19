@@ -13,6 +13,7 @@ class Manager:
 
     def registration_phase_receive(self, rpk):
         self.rpks.append(rpk)
+        return len(self.rpks) - 1
 
     def registration_phase_send_rpks(self):
         return self.rpks

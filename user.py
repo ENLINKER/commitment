@@ -21,9 +21,11 @@ class User:
         self.rsk = self.rsk.scalar
         return self.rpk
 
+    def registration_phase_receive_index(self, rpk_index):
+        self.rpk_index = rpk_index
+
     def registration_phase_receive_rpks(self, rpks: list):
         self.rpks = rpks
-        self.rpk_index = rpks.index(self.rpk)
 
     def unlinkable_post_phase_send(self):
         message = ''.join(random.choices(string.ascii_lowercase, k=8))

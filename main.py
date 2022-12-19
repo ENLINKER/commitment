@@ -22,21 +22,32 @@ print("1. registration phase")
 manager_timer11 = Timer("manager phase 1.1")
 user_timer11 = Timer("user phase 1.1")
 
-data = []
+u2m_data = []
 
 user_timer11.start()
 for user in users:
     rpk = user.registration_phase_send()
-    data.append(rpk)
+    u2m_data.append(rpk)
 user_timer11.end()
 
-user_timer11.add_bandwidth(data)
-manager_timer11.add_bandwidth(data)
+user_timer11.add_bandwidth(u2m_data)
+manager_timer11.add_bandwidth(u2m_data)
+
+m2u_data = []
 
 manager_timer11.start()
-for d in data:
-    manager.registration_phase_receive(d)
+for d in u2m_data:
+    rpk_index = manager.registration_phase_receive(d)
+    m2u_data.append(rpk_index)
 manager_timer11.end()
+
+manager_timer11.add_bandwidth(m2u_data)
+user_timer11.add_bandwidth(m2u_data)
+
+user_timer11.start()
+for user, d in zip(users, m2u_data):
+    user.registration_phase_receive_index(d)
+user_timer11.end()
 
 manager_timer11.print()
 user_timer11.print(NUM_USER)
@@ -56,10 +67,11 @@ manager_timer12.add_bandwidth(data)
 user_timer12.add_bandwidth(data)
 
 user_timer12.start()
-for d in data:
-    user.registration_phase_receive_rpks(rpks)
+for user, d in zip(users, data):
+    user.registration_phase_receive_rpks(d)
 user_timer12.end()
 
+print()
 manager_timer12.print()
 user_timer12.print(NUM_USER)
 
@@ -104,7 +116,7 @@ user_timer3.start()
 for user in users:
     for post in user.posts:
         username, ck = user.disclose_phase_send(post.uuid)
-        data.append[post.uuid, username, ck]
+        data.append([post.uuid, username, ck])
 user_timer3.end()
 
 user_timer3.add_bandwidth(data)
@@ -121,11 +133,11 @@ user_timer3.print(NUM_USER)
 
 print()
 print(f"Manager rpk storage: {manager.rpks_storage()} Bytes")
-print(f"Manager rpk storage: {manager.rpks_storage() / NUM_USER} Bytes per user")
+print(f"Manager rpk storage: {manager.rpks_storage() // NUM_USER} Bytes per user")
 
 print()
 print(f"Manager posts storage: {manager.posts_storage()} Bytes")
-print(f"Manager posts storage: {manager.posts_storage() / (NUM_USER * POST_PER_USER)} Bytes per post")
+print(f"Manager posts storage: {manager.posts_storage() // (NUM_USER * POST_PER_USER)} Bytes per post")
 
 print()
 print(f"Manager total storage: {manager.rpks_storage() + manager.posts_storage()} Bytes")
